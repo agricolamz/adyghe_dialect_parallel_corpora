@@ -1,0 +1,69 @@
+---
+output: 
+  html_document:
+    include:
+      after_body: footer.html
+knit: (function(inputFile, encoding) { 
+      out_dir <- 'docs';
+      rmarkdown::render(inputFile,
+                        encoding=encoding, 
+                        output_file=file.path(dirname(inputFile), out_dir, 'index.html')) })
+---
+
+```{r setup, include=FALSE, warning=F}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE)
+library(tidyverse)
+library(lingtypology)
+library(readxl)
+```
+
+###  The Sound Change in Sibilants Database {.tabset .tabset-fade .tabset-pills}
+
+#### about database
+Here is a map of the languages from SCSD:
+```{r}
+df <- read_xlsx("inventories.xlsx")
+df %>% 
+  mutate(cons_s_ratio = n_sibilants/n_consonants,
+         label = ifelse(is.na(dialect), 
+                        language,
+                        paste0(language, ", ", dialect))) ->
+  df
+map.feature(df$language,
+            features = df$cons_s_ratio,
+            latitude = df$lat,
+            longitude = df$long,
+            label = df$label,
+            label.hide = TRUE,
+            color = c("white", "red"),
+            title = "sibilant/consonant <br> ratio",
+            legend.position = "bottomright")
+```
+
+
+```{r}
+map.feature(df$language,
+            latitude = df$lat,
+            longitude = df$long,
+            features = df$n_loci,
+            label = df$label,
+            label.hide = TRUE,
+            color = c("white", "red"),
+            title = "n_loci",
+            legend.position = "bottomright")
+```
+
+
+#### search
+```{r}
+library(DT)
+db <- read_xlsx("sound_change.xlsx")
+datatable(db, filter = 'top', rownames = FALSE, options = list(pageLength = 20, dom = 'tip'), escape = FALSE)
+```
+
+#### bibliography
+```{r}
+bib <- read_xlsx("bibliography.xlsx")
+datatable(bib, filter = 'top', rownames = FALSE, options = list(pageLength = 20, dom = 'tip'), escape = FALSE)
+```
+
