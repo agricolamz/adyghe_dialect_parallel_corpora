@@ -10,60 +10,25 @@ knit: (function(inputFile, encoding) {
                         output_file=file.path(dirname(inputFile), out_dir, 'index.html')) })
 ---
 
-```{r setup, include=FALSE, warning=F}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo=FALSE, message=FALSE)
 library(tidyverse)
+library(magrittr)
 library(lingtypology)
-library(readxl)
+library(DT)
 ```
 
-###  The Sound Change in Sibilants Database {.tabset .tabset-fade .tabset-pills}
+###  A Multidialectal Parallel Corpus of Adyghe {.tabset .tabset-fade .tabset-pills}
 
 #### about database
-Here is a map of the languages from SCSD:
-```{r}
-df <- read_xlsx("inventories.xlsx")
-df %>% 
-  mutate(cons_s_ratio = n_sibilants/n_consonants,
-         label = ifelse(is.na(dialect), 
-                        language,
-                        paste0(language, ", ", dialect))) ->
-  df
-map.feature(df$language,
-            features = df$cons_s_ratio,
-            latitude = df$lat,
-            longitude = df$long,
-            label = df$label,
-            label.hide = TRUE,
-            color = c("white", "red"),
-            title = "sibilant/consonant <br> ratio",
-            legend.position = "bottomright")
-```
-
-
-```{r}
-map.feature(df$language,
-            latitude = df$lat,
-            longitude = df$long,
-            features = df$n_loci,
-            label = df$label,
-            label.hide = TRUE,
-            color = c("white", "red"),
-            title = "n_loci",
-            legend.position = "bottomright")
-```
-
+Here will be a nice text
 
 #### search
 ```{r}
-library(DT)
-db <- read_xlsx("sound_change.xlsx")
+db <- read_csv("database.csv")
+db %<>% 
+  mutate(audio = paste0('<audio controls> <source src="',
+                        audio, '" type="audio/wav"></audio>'))
+
 datatable(db, filter = 'top', rownames = FALSE, options = list(pageLength = 20, dom = 'tip'), escape = FALSE)
 ```
-
-#### bibliography
-```{r}
-bib <- read_xlsx("bibliography.xlsx")
-datatable(bib, filter = 'top', rownames = FALSE, options = list(pageLength = 20, dom = 'tip'), escape = FALSE)
-```
-
